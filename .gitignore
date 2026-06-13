@@ -26,3 +26,6 @@ data/cache/
 
 # Model outputs (if any later)
 models/
+.env
+.venv/
+venv/
