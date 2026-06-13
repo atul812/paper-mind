@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 import asyncio
 import time
@@ -65,6 +66,7 @@ async def pipeline(request: QueryRequest):
     # run backend pipeline async
     try:
         result = await run_pipeline_async(query)
+        result = jsonable_encoder(result)
         # store in cache
         CACHE[query] = (
             result,

@@ -48,9 +48,9 @@ def compute_tfidf_scores(papers):
     for i, (topic, window) in enumerate(labels):
 
         rows.append({
-            "topic_id": topic,
+            "topic_id": int(topic),
             "window": window,
-            "score": scores[i]
+            "score": float(scores[i])
         })
 
     return pd.DataFrame(rows)

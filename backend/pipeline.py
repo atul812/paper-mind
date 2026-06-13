@@ -24,38 +24,18 @@ def run_pipeline(query):
     papers=enrich_with_citations(papers)
     papers=compute_time_windows(
         papers,
-        window_months=6
+        window_weeks=1  # 1 week windows for granular temporal resolution
     )
-    print("\nWINDOWS FOUND:")
-    print(sorted(list(set(p["window"] for p in papers))))
-
-    print("\nEARLIEST DATE:")
-    print(min(p["published_date"] for p in papers))
-
-    print("\nLATEST DATE:")
-    print(max(p["published_date"] for p in papers))
+    
 
     papers,topic_map=run_topic_modeling(
         papers
     )
-    print("\nTOPIC IDS:")
-    print(set(p["topic_id"] for p in papers))
-
-    print("\nTOPIC MAP:")
-    print(topic_map)
 
     tfidf_matrix=compute_tfidf_scores(
         papers
     )
 
-    print("\nTFIDF MATRIX")
-    print(tfidf_matrix.head())
-
-    print("\nTFIDF COLUMNS")
-    print(tfidf_matrix.columns)
-
-    print("\nWINDOWS")
-    print(tfidf_matrix["window"].unique())
     velocity=compute_velocity(
         tfidf_matrix
     )
@@ -71,7 +51,7 @@ def run_pipeline(query):
 
     forecast=forecast_topics(
         tfidf_matrix,
-        horizon_months=12
+        horizon_windows=4  # Forecast 4 weeks ahead (1 month)
     )
 
     top_accelerating=get_top_accelerating(

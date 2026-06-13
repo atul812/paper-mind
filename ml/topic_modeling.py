@@ -23,6 +23,7 @@ def run_topic_modeling(papers):
         min_dist=0.0,
         metric="cosine",
         random_state=42,
+        init="random",
     )
 
     # Adjust HDBSCAN parameters based on dataset size
