@@ -6,6 +6,11 @@ import numpy as np
 def compute_velocity(tfidf_matrix):
 
     results = []
+    
+    # Handle empty DataFrame
+    if tfidf_matrix.empty or "topic_id" not in tfidf_matrix.columns:
+        return []
+    
     for topic in tfidf_matrix.topic_id.unique():
 
         df = tfidf_matrix[

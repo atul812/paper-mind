@@ -26,15 +26,36 @@ def run_pipeline(query):
         papers,
         window_months=6
     )
+    print("\nWINDOWS FOUND:")
+    print(sorted(list(set(p["window"] for p in papers))))
+
+    print("\nEARLIEST DATE:")
+    print(min(p["published_date"] for p in papers))
+
+    print("\nLATEST DATE:")
+    print(max(p["published_date"] for p in papers))
 
     papers,topic_map=run_topic_modeling(
         papers
     )
+    print("\nTOPIC IDS:")
+    print(set(p["topic_id"] for p in papers))
+
+    print("\nTOPIC MAP:")
+    print(topic_map)
 
     tfidf_matrix=compute_tfidf_scores(
         papers
     )
 
+    print("\nTFIDF MATRIX")
+    print(tfidf_matrix.head())
+
+    print("\nTFIDF COLUMNS")
+    print(tfidf_matrix.columns)
+
+    print("\nWINDOWS")
+    print(tfidf_matrix["window"].unique())
     velocity=compute_velocity(
         tfidf_matrix
     )

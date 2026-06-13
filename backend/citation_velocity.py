@@ -7,7 +7,14 @@ def compute_citation_velocity(papers):
     rows=[]
     grouped={}
 
-    for p in papers:
+    # Handle both list and DataFrame inputs
+    if isinstance(papers, pd.DataFrame):
+        # Convert DataFrame to list of dicts
+        papers_list = papers.to_dict('records')
+    else:
+        papers_list = papers
+    
+    for p in papers_list:
 
         if p["topic_id"]==-1:
             continue

@@ -1,5 +1,9 @@
 def compute_momentum(publication_velocity,citation_velocity):
 
+    # Return empty list if either input is empty
+    if not publication_velocity or not citation_velocity:
+        return []
+    
     citation_map={}
     for c in citation_velocity:
         citation_map[c["topic_id"]]=c

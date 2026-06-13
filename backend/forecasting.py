@@ -3,6 +3,11 @@ import numpy as np
 
 def forecast_topics(tfidf_matrix,horizon_months=12):
     forecasts=[]
+    
+    # Handle empty DataFrame
+    if tfidf_matrix.empty or "topic_id" not in tfidf_matrix.columns:
+        return []
+    
     for topic in tfidf_matrix.topic_id.unique():
 
         df=tfidf_matrix[tfidf_matrix.topic_id==topic].sort_values("window")

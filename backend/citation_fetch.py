@@ -10,8 +10,8 @@ def get_citation_data(arxiv_id):
 
     paper_id = f"ARXIV:{arxiv_id}"
     fields = (
-        "citationCount,"
-        "influentialCitationCount,"
+        "citationCount",
+        "influentialCitationCount",
         "title"
     )
 

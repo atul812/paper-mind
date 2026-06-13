@@ -7,3 +7,8 @@ pandas
 numpy
 python-dotenv
 google-generativeai
+requests
+feedparser
+fastapi
+uvicorn
+pytest
