@@ -1,3 +1,31 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+.env/
+.env.local
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Cache/data files (important for your project)
+data/cache/
+*.pkl
+
+# Logs
+*.log
+
+# Model outputs (if any later)
+models/
 .env
 .venv/
 venv/
