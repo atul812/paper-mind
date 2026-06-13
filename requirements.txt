@@ -5,5 +5,5 @@ hdbscan
 scikit-learn
 pandas
 numpy
-groq
 python-dotenv
+google-generativeai
