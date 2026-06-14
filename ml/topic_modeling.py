@@ -2,6 +2,7 @@ from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
 from umap import UMAP
 from hdbscan import HDBSCAN
+from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 import pandas as pd
 
 
@@ -27,26 +28,48 @@ def run_topic_modeling(papers):
     )
 
     # Adjust HDBSCAN parameters based on dataset size
-    min_cluster_size = max(2, min(10, len(abstracts) // 2))
+    min_cluster_size = max(2, min(15, max(2, len(abstracts) // 10)))
     
     hdbscan_model = HDBSCAN(
         min_cluster_size=min_cluster_size,
+        min_samples=1,
         metric="euclidean",
         prediction_data=True,
     )
 
     # Adjust min_topic_size based on dataset size
-    min_topic_size = max(2, min(10, len(abstracts) // 3))
+    min_topic_size = max(2, min(15, max(2, len(abstracts) // 10)))
+
+    # Use a research-aware vectorizer to remove stop words and capture common n-grams
+    research_stop_words = {
+        "et", "al", "figure", "method", "paper", "result",
+        "approach", "study", "dataset", "model", "learning",
+    }
+    vectorizer_model = CountVectorizer(
+        stop_words=list(set(ENGLISH_STOP_WORDS).union(research_stop_words)),
+        ngram_range=(1, 2),
+        min_df=1,
+        max_df=1.0,
+        max_features=1000,
+    )
     
     topic_model = BERTopic(
         embedding_model=embedding_model,
         umap_model=umap_model,
         hdbscan_model=hdbscan_model,
+        vectorizer_model=vectorizer_model,
         min_topic_size=min_topic_size,
-        verbose=True,
+        verbose=False,
     )
 
-    topics, probs = topic_model.fit_transform(abstracts)
+    try:
+        topics, probs = topic_model.fit_transform(abstracts)
+    except Exception:
+        # BERTopic may fail on very small or noisy inputs.
+        # Fall back to a single general topic so the backend remains stable.
+        for idx in range(len(papers)):
+            papers[idx]["topic_id"] = 0
+        return papers, {0: ["general"]}
 
     # Ensure papers list length matches topics list
     if len(papers) != len(topics):
@@ -57,6 +80,10 @@ def run_topic_modeling(papers):
     for idx, topic_id in enumerate(topics):
         papers[idx]["topic_id"] = int(topic_id)
 
+    research_stop_words = {
+        "et", "al", "figure", "method", "paper", "result",
+        "approach", "study", "dataset", "model", "learning",
+    }
     topic_labels = {}
 
     for topic_id in topic_model.get_topics():
@@ -64,10 +91,19 @@ def run_topic_modeling(papers):
         if topic_id == -1:
             continue
 
-        words = topic_model.get_topic(topic_id)
-
-        topic_labels[topic_id] = [
-            word for word, _ in words[:5]
+        all_words = topic_model.get_topic(topic_id, full=False)
+        
+        keywords = [
+            word for word, _ in all_words
+            if word.lower() not in ENGLISH_STOP_WORDS
+            and word.lower() not in research_stop_words
         ]
+        
+        if keywords:
+            keywords = keywords[:5]
+        else:
+            keywords = [word for word, _ in all_words[:5]]
+
+        topic_labels[topic_id] = keywords
 
     return papers, topic_labels

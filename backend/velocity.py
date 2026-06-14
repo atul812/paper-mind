@@ -11,11 +11,11 @@ def compute_velocity(tfidf_matrix):
     if tfidf_matrix.empty or "topic_id" not in tfidf_matrix.columns:
         return []
     
-    for topic in tfidf_matrix.topic_id.unique():
+    for topic in tfidf_matrix["topic_id"].unique():
         topic_id = int(topic)
 
         df = tfidf_matrix[
-            tfidf_matrix.topic_id == topic ].sort_values("window")
+            tfidf_matrix["topic_id"] == topic].sort_values("window")
         y = df["score"].values
         if len(y) < 2:
             slope = 0.0

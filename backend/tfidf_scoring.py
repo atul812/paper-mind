@@ -9,17 +9,21 @@ def compute_tfidf_scores(papers):
     grouped = defaultdict(str)
 
     for p in papers:
-        if p["topic_id"] == -1:
+        topic_id = p.get("topic_id", -1)
+        if topic_id == -1:
+            continue
+
+        window = p.get("window")
+        abstract = p.get("abstract", "")
+        if window is None or abstract is None:
             continue
 
         key = (
-            p["topic_id"],
-            p["window"]
-
+            topic_id,
+            window
         )
 
-
-        grouped[key] += (" " + p["abstract"])
+        grouped[key] += (" " + abstract)
 
     for key, text in grouped.items():
         labels.append(key)

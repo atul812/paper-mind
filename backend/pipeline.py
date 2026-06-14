@@ -62,9 +62,13 @@ def run_pipeline(query):
 
     serializable_papers=[]
     for p in papers:
+        published_date = p.get("published_date")
         serializable_papers.append({
             **p,
-            "published_date":p["published_date"].isoformat()
+            "published_date":
+                published_date.isoformat()
+                if hasattr(published_date, "isoformat")
+                else published_date
         })
 
 
