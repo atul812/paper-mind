@@ -1,17 +1,22 @@
 import requests
 import time
+import re
 
 BASE_URL = "https://api.semanticscholar.org/graph/v1/paper/"
 _cache = {}
 MAX_CITATION_PAPERS = 12
 
 def get_citation_data(arxiv_id):
-    if arxiv_id in _cache:
-        return _cache[arxiv_id]
-
     # Strip version suffix (e.g., '2106.12345v2' -> '2106.12345')
+    # using regex: match the pattern XXXX.XXXXX (4 digits, dot, 5 digits)
     # Semantic Scholar's ARXIV: lookup doesn't resolve versioned IDs
-    arxiv_id_clean = arxiv_id.split('v')[0] if 'v' in arxiv_id else arxiv_id
+    match = re.match(r'^(\d{4}\.\d{4,5})', arxiv_id)
+    arxiv_id_clean = match.group(1) if match else arxiv_id
+    
+    # Check cache using the cleaned ID (all variants map to the same cache entry)
+    if arxiv_id_clean in _cache:
+        return _cache[arxiv_id_clean]
+
     paper_id = f"ARXIV:{arxiv_id_clean}"
     fields = (
         "citationCount",
@@ -34,7 +39,7 @@ def get_citation_data(arxiv_id):
                 "citation_count": 0,
                 "influential_citation_count": 0
             }
-            _cache[arxiv_id] = result
+            _cache[arxiv_id_clean] = result
             return result
         data = response.json()
 
@@ -42,7 +47,7 @@ def get_citation_data(arxiv_id):
             "citation_count": data.get("citationCount", None),
             "influential_citation_count": data.get("influentialCitationCount", None),
         }
-        _cache[arxiv_id] = result
+        _cache[arxiv_id_clean] = result
         return result
 
     except Exception:
@@ -52,7 +57,7 @@ def get_citation_data(arxiv_id):
             "influential_citation_count": 0
 
         }
-        _cache[arxiv_id] = result
+        _cache[arxiv_id_clean] = result
         return result
 
 def enrich_with_citations(papers):
