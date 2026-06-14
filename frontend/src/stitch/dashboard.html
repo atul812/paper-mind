@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PaperMind | Research Terminal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#31394d",
+                        "surface-container-low": "#131b2e",
+                        "on-primary-container": "#efefff",
+                        "on-secondary-container": "#d6a9ff",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "tertiary-container": "#00788c",
+                        "primary": "#b8c3ff",
+                        "tertiary": "#4cd7f6",
+                        "on-tertiary-container": "#d7f6ff",
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#2d3449",
+                        "secondary-fixed-dim": "#ddb7ff",
+                        "primary-fixed": "#dde1ff",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#283044",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "background": "#0b1326",
+                        "primary-fixed-dim": "#b8c3ff",
+                        "secondary-fixed": "#f0dbff",
+                        "outline-variant": "#434656",
+                        "primary-container": "#2e5bff",
+                        "inverse-primary": "#124af0",
+                        "on-surface": "#dae2fd",
+                        "surface-container-high": "#222a3d",
+                        "on-primary-fixed-variant": "#0035be",
+                        "surface-container-lowest": "#060e20",
+                        "tertiary-fixed": "#acedff",
+                        "surface-variant": "#2d3449",
+                        "inverse-surface": "#dae2fd",
+                        "surface-dim": "#0b1326",
+                        "surface": "#0b1326",
+                        "on-primary": "#002388",
+                        "surface-container": "#171f33",
+                        "on-secondary-fixed": "#2c0051",
+                        "on-primary-fixed": "#001356",
+                        "on-background": "#dae2fd",
+                        "on-secondary-fixed-variant": "#6900b3",
+                        "on-tertiary-fixed": "#001f26",
+                        "on-secondary": "#490080",
+                        "surface-tint": "#b8c3ff",
+                        "on-surface-variant": "#c4c5d9",
+                        "secondary-container": "#6f00be",
+                        "outline": "#8e90a2",
+                        "secondary": "#ddb7ff",
+                        "on-tertiary": "#003640"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "base": "4px",
+                        "sidebar-width": "260px",
+                        "xs": "4px",
+                        "xl": "40px",
+                        "container-max": "1600px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "data-mono": ["JetBrains Mono"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "data-mono": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "headline-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(184, 195, 255, 0.3);
+            background: rgba(23, 31, 51, 0.8);
+        }
+        .rim-light {
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 14, 32, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-glow {
+            box-shadow: 0 0 15px rgba(221, 183, 255, 0.1);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .pulse-accent {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-body-md overflow-x-hidden">
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+<div class="flex flex-col items-center gap-md">
+<div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+<p class="font-data-mono text-primary text-body-sm tracking-widest uppercase">Initializing Neural Pipeline...</p>
+</div>
+</div>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-lowest border-r border-outline-variant/10 backdrop-blur-xl flex flex-col py-lg z-50">
+<div class="px-lg mb-xl flex items-center gap-sm">
+<img alt="PaperMind AI Logo" class="w-8 h-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpgXltixBL8p6lDVAO0OxJ4-tp204wS92nbpXQIqKpPeQWJ1kBSAMp0iHuwfDdfaxhQLxjGb_1Hjht0dnsaTKXnp4o1uAb6BvqdYqc_CiTtR2cKy0RKJIdVvcXQyL_e0ZSfHkdHwhcjaoYzgswK-dCFjmYoEWbypcisRP5SUijz9CSn9gjGoXKawUbrIRRP0mAuno4SYBRPV-LJICslmfgQX9hjJOG6sy828ERkY0AGRDY1rjtk-cJc1TqFcqF1SqjGmni7IC2hIs"/>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">PaperMind AI</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant opacity-70">Research Terminal</span>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-primary/5 border-l-2 border-secondary shadow-[0_0_15px_rgba(221,183,255,0.1)] active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/50 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-body-md text-body-md">Trends</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/50 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">speed</span>
+<span class="font-body-md text-body-md">Momentum</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/50 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-body-md text-body-md">Forecast</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/50 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">Papers</span>
+</a>
+</nav>
+<div class="mt-auto px-lg">
+<button class="w-full bg-primary-container text-on-primary-container font-bold py-md rounded-lg flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all mb-lg" onclick="simulateAnalysis()">
+<span class="material-symbols-outlined">add</span>
+<span>New Analysis</span>
+</button>
+<div class="space-y-1">
+<a class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+</div>
+<div class="mt-lg pt-lg border-t border-outline-variant/10 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/20 flex items-center justify-center overflow-hidden">
+<img alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY-Gfbr2wonu_5BnugMKGynSTBiO2pqFnb-MC3hClwab85ILP8zcKba69fe84rEtuGDwGCmoRE1l5hsxTeMppai4ipyx9ppt3ksg2iX0C0r4qwygzUcEHf9_0qug_mQZMAaFJ8EVQRo4vKh7srNdjdr-EihM-zHYP9Iz2v00F6_pyzGqo8gKemC2lFoibqUcbz0ZWX6wTss-hVTHf9_Jy7Nfflz6_8AFBP9xUcl-mLiwNt5_3TvAq8pjx-RWoXvrSfm915UGtF9uU"/>
+</div>
+<div class="flex flex-col">
+<span class="text-body-sm font-bold text-on-surface">Dr. Aris Thorne</span>
+<span class="text-[10px] uppercase tracking-widest text-secondary font-bold">Pro Access</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar-width min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface/60 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-lg z-40">
+<div class="flex items-center flex-1 max-w-2xl gap-md">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary">search</span>
+<input class="w-full bg-surface-container-high/50 border border-outline-variant/20 rounded-lg pl-10 pr-4 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-on-surface-variant/50" placeholder="Enter research query..." type="text"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-data-mono text-outline-variant px-1 border border-outline-variant/30 rounded bg-surface-container-lowest">CMD+K</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="px-md py-1.5 bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container rounded font-bold text-body-sm hover:shadow-[0_0_20px_rgba(46,91,255,0.3)] transition-all" onclick="simulateAnalysis()">
+                    Analyze
+                </button>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-white/5 transition-all rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<div class="absolute top-2.5 right-2.5 w-2 h-2 bg-secondary rounded-full border-2 border-background"></div>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-white/5 transition-all rounded-full">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="pt-24 px-lg pb-xl max-w-container-max mx-auto space-y-lg">
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<div class="glass-card rim-light p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant">TOTAL PAPERS</span>
+<span class="material-symbols-outlined text-primary text-xl">library_books</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">1,284,092</span>
+<span class="text-[10px] font-data-mono text-tertiary">+12.4%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary w-[72%] h-full"></div>
+</div>
+</div>
+<div class="glass-card rim-light p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant">ACTIVE TOPICS</span>
+<span class="material-symbols-outlined text-secondary text-xl">hub</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">452</span>
+<span class="text-[10px] font-data-mono text-on-surface-variant">Current</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-secondary w-[45%] h-full"></div>
+</div>
+</div>
+<div class="glass-card rim-light p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant">HIGHEST MOMENTUM</span>
+<span class="material-symbols-outlined text-tertiary text-xl">bolt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">9.84</span>
+<span class="text-[10px] font-data-mono text-tertiary">LLM-04</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-tertiary w-[98%] h-full pulse-accent"></div>
+</div>
+</div>
+<div class="glass-card rim-light p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant">FASTEST GROWING</span>
+<span class="material-symbols-outlined text-error text-xl">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Diffusion</span>
+<span class="text-[10px] font-data-mono text-on-surface-variant">Category</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-error w-[61%] h-full"></div>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+<div class="glass-card rim-light p-lg rounded-xl flex flex-col h-[400px]">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-title-lg text-title-lg text-on-surface">Publication Velocity</h3>
+<div class="flex items-center gap-sm">
+<button class="text-[10px] font-data-mono px-2 py-1 bg-surface-container-high rounded text-primary">D</button>
+<button class="text-[10px] font-data-mono px-2 py-1 hover:bg-surface-container-high rounded transition-colors">W</button>
+<button class="text-[10px] font-data-mono px-2 py-1 hover:bg-surface-container-high rounded transition-colors border border-primary/20">M</button>
+</div>
+</div>
+<div class="flex-1 relative flex items-end gap-1.5 pb-2 border-b border-outline-variant/10">
+<!-- Simulated Chart -->
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[60%] rounded-t-sm group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-bright p-2 rounded shadow-xl text-[10px] font-data-mono opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-primary/20">842 Papers<br/>Sep 04</div>
+</div>
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[75%] rounded-t-sm group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-bright p-2 rounded shadow-xl text-[10px] font-data-mono opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-primary/20">956 Papers<br/>Sep 05</div>
+</div>
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[65%] rounded-t-sm group relative"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[85%] rounded-t-sm group relative"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[70%] rounded-t-sm group relative"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[95%] rounded-t-sm group relative"></div>
+<div class="flex-1 bg-gradient-to-t from-primary/10 to-primary/40 h-[80%] rounded-t-sm group relative"></div>
+</div>
+<div class="flex justify-between mt-md text-[10px] font-data-mono text-on-surface-variant uppercase tracking-widest">
+<span>Sep 01</span>
+<span>Sep 07</span>
+<span>Sep 14</span>
+<span>Sep 21</span>
+<span>Sep 28</span>
+</div>
+</div>
+<div class="glass-card rim-light p-lg rounded-xl flex flex-col h-[400px]">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-title-lg text-title-lg text-on-surface">Citation Velocity</h3>
+<span class="text-[10px] font-data-mono text-secondary px-2 py-1 rounded bg-secondary/10">+24.2% Growth</span>
+</div>
+<div class="flex-1 relative border-l border-b border-outline-variant/10 flex items-end">
+<svg class="w-full h-full" viewbox="0 0 400 200">
+<path class="text-secondary opacity-80" d="M0,180 Q50,160 100,120 T200,80 T300,40 T400,20" fill="none" stroke="currentColor" stroke-width="2"></path>
+<path class="fill-secondary/5" d="M0,180 Q50,160 100,120 T200,80 T300,40 T400,20 L400,200 L0,200 Z"></path>
+<circle class="fill-secondary pulse-accent" cx="100" cy="120" r="4"></circle>
+<circle class="fill-secondary pulse-accent" cx="300" cy="40" r="4"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-md text-[10px] font-data-mono text-on-surface-variant uppercase tracking-widest">
+<span>Q1</span>
+<span>Q2</span>
+<span>Q3</span>
+<span>Q4</span>
+</div>
+</div>
+</div>
+<!-- Analytics Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<div class="glass-card rim-light p-lg rounded-xl col-span-1">
+<h3 class="font-title-lg text-title-lg mb-lg">Combined Momentum</h3>
+<div class="flex flex-col gap-md">
+<div class="flex justify-between items-end border-b border-outline-variant/10 pb-md">
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant uppercase font-data-mono">Global Index</span>
+<span class="font-headline-sm text-primary">8.42</span>
+</div>
+<span class="material-symbols-outlined text-primary mb-1">trending_up</span>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-body-sm">
+<span>Algorithmic Density</span>
+<span class="font-data-mono">82%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full">
+<div class="bg-primary w-[82%] h-full rounded-full"></div>
+</div>
+<div class="flex justify-between text-body-sm mt-2">
+<span>Network Diffusion</span>
+<span class="font-data-mono">46%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full">
+<div class="bg-secondary w-[46%] h-full rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card rim-light p-lg rounded-xl col-span-2">
+<h3 class="font-title-lg text-title-lg mb-lg">12-Month Forecast</h3>
+<div class="grid grid-cols-12 h-40 gap-2 items-end">
+<div class="col-span-1 h-[30%] bg-outline-variant/20 rounded-t-sm"></div>
+<div class="col-span-1 h-[45%] bg-outline-variant/20 rounded-t-sm"></div>
+<div class="col-span-1 h-[40%] bg-outline-variant/20 rounded-t-sm"></div>
+<div class="col-span-1 h-[55%] bg-outline-variant/20 rounded-t-sm"></div>
+<div class="col-span-1 h-[70%] bg-outline-variant/20 rounded-t-sm"></div>
+<div class="col-span-1 h-[65%] bg-outline-variant/20 rounded-t-sm"></div>
+<div class="col-span-1 h-[85%] bg-tertiary-container/50 rounded-t-sm border-t-2 border-tertiary shadow-[0_0_10px_rgba(76,215,246,0.3)]"></div>
+<div class="col-span-1 h-[90%] bg-tertiary-container/50 rounded-t-sm border-t-2 border-tertiary"></div>
+<div class="col-span-1 h-[95%] bg-tertiary-container/50 rounded-t-sm border-t-2 border-tertiary"></div>
+<div class="col-span-1 h-[100%] bg-tertiary-container/50 rounded-t-sm border-t-2 border-tertiary"></div>
+<div class="col-span-1 h-[98%] bg-tertiary-container/50 rounded-t-sm border-t-2 border-tertiary"></div>
+<div class="col-span-1 h-[105%] bg-tertiary-container/50 rounded-t-sm border-t-2 border-tertiary"></div>
+</div>
+<div class="flex justify-between mt-md text-[10px] font-data-mono text-on-surface-variant uppercase tracking-widest">
+<span>Current</span>
+<span class="text-tertiary">Forecasted (LLM Predicted)</span>
+<span>+12M</span>
+</div>
+</div>
+</div>
+<!-- Topic Explorer -->
+<div class="space-y-md">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg">Topic Explorer</h3>
+<button class="text-body-sm text-primary flex items-center gap-1 hover:underline">View All Trends <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<div class="glass-card rim-light p-md rounded-xl hover:translate-y-[-4px]">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-[10px] font-data-mono text-on-surface-variant">ID: 0x82A1</span>
+<span class="text-tertiary font-bold flex items-center">↑ 14%</span>
+</div>
+<h4 class="font-bold text-body-md mb-2">Synthetic Data Gen</h4>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">Diffusion</span>
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">GANs</span>
+</div>
+<div class="mt-md flex justify-between items-center text-[11px] text-on-surface-variant">
+<span>Momentum Score</span>
+<span class="font-data-mono text-on-surface">9.2</span>
+</div>
+</div>
+<div class="glass-card rim-light p-md rounded-xl hover:translate-y-[-4px]">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-[10px] font-data-mono text-on-surface-variant">ID: 0x9B42</span>
+<span class="text-tertiary font-bold flex items-center">↑ 8%</span>
+</div>
+<h4 class="font-bold text-body-md mb-2">Quantum Transformers</h4>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">Attention</span>
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">Qubits</span>
+</div>
+<div class="mt-md flex justify-between items-center text-[11px] text-on-surface-variant">
+<span>Momentum Score</span>
+<span class="font-data-mono text-on-surface">7.8</span>
+</div>
+</div>
+<div class="glass-card rim-light p-md rounded-xl hover:translate-y-[-4px]">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-[10px] font-data-mono text-on-surface-variant">ID: 0xC128</span>
+<span class="text-tertiary font-bold flex items-center">↑ 22%</span>
+</div>
+<h4 class="font-bold text-body-md mb-2">Bio-Neuromorphic</h4>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">Spiking</span>
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">LIF</span>
+</div>
+<div class="mt-md flex justify-between items-center text-[11px] text-on-surface-variant">
+<span>Momentum Score</span>
+<span class="font-data-mono text-on-surface">8.4</span>
+</div>
+</div>
+<div class="glass-card rim-light p-md rounded-xl hover:translate-y-[-4px]">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-[10px] font-data-mono text-on-surface-variant">ID: 0xF720</span>
+<span class="text-secondary font-bold flex items-center">↑ 4%</span>
+</div>
+<h4 class="font-bold text-body-md mb-2">Zero-Shot Reasoning</h4>
+<div class="flex flex-wrap gap-1">
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">CoT</span>
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high border border-white/5 rounded">Logic</span>
+</div>
+<div class="mt-md flex justify-between items-center text-[11px] text-on-surface-variant">
+<span>Momentum Score</span>
+<span class="font-data-mono text-on-surface">6.5</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Papers Table -->
+<div class="glass-card rounded-xl overflow-hidden rim-light">
+<div class="px-lg py-md border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-low/50">
+<h3 class="font-title-lg text-title-lg">Recent Research Papers</h3>
+<div class="flex gap-sm">
+<button class="w-8 h-8 rounded border border-outline-variant/20 flex items-center justify-center hover:bg-surface-bright transition-colors"><span class="material-symbols-outlined text-sm">filter_list</span></button>
+<button class="w-8 h-8 rounded border border-outline-variant/20 flex items-center justify-center hover:bg-surface-bright transition-colors"><span class="material-symbols-outlined text-sm">download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-label-caps text-on-surface-variant bg-surface-container-low/30">
+<th class="px-lg py-4 font-bold tracking-widest border-b border-outline-variant/10">PAPER TITLE</th>
+<th class="px-lg py-4 font-bold tracking-widest border-b border-outline-variant/10">AUTHORS</th>
+<th class="px-lg py-4 font-bold tracking-widest border-b border-outline-variant/10">DATE</th>
+<th class="px-lg py-4 font-bold tracking-widest border-b border-outline-variant/10">TOPIC</th>
+<th class="px-lg py-4 font-bold tracking-widest border-b border-outline-variant/10">CITATIONS</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-data-mono">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface group-hover:text-primary transition-colors">Attention Is All You Need: Redux</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Vaswani et al.</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Oct 12, 2024</td>
+<td class="px-lg py-4 border-b border-outline-variant/5"><span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">Transformers</span></td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface">1,482</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface group-hover:text-primary transition-colors">Latent Diffusion for Medical Imaging</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Rombach, A.</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Oct 10, 2024</td>
+<td class="px-lg py-4 border-b border-outline-variant/5"><span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20">Generative</span></td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface">312</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface group-hover:text-primary transition-colors">Low-Rank Adaptation (LoRA) for Robotics</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Hu, E.J.</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Oct 09, 2024</td>
+<td class="px-lg py-4 border-b border-outline-variant/5"><span class="px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary border border-tertiary/20">Fine-tuning</span></td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface">894</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface group-hover:text-primary transition-colors">Scaling Laws for Multimodal Neural Nets</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Kaplan et al.</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Oct 05, 2024</td>
+<td class="px-lg py-4 border-b border-outline-variant/5"><span class="px-2 py-0.5 rounded-full bg-error/10 text-error border border-error/20">Theory</span></td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface">5,021</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface group-hover:text-primary transition-colors">Retrieval-Augmented Visual Thinking</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Lewis, P.</td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface-variant">Sep 28, 2024</td>
+<td class="px-lg py-4 border-b border-outline-variant/5"><span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">RAG</span></td>
+<td class="px-lg py-4 border-b border-outline-variant/5 text-on-surface">246</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-4 flex items-center justify-between text-[11px] font-data-mono text-on-surface-variant bg-surface-container-low/20">
+<span>Showing 1-5 of 1,284,092 entries</span>
+<div class="flex gap-2">
+<button class="px-2 py-1 border border-outline-variant/20 rounded hover:bg-surface-bright">PREV</button>
+<button class="px-2 py-1 bg-primary text-on-primary rounded">1</button>
+<button class="px-2 py-1 border border-outline-variant/20 rounded hover:bg-surface-bright">2</button>
+<button class="px-2 py-1 border border-outline-variant/20 rounded hover:bg-surface-bright">3</button>
+<button class="px-2 py-1 border border-outline-variant/20 rounded hover:bg-surface-bright">NEXT</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        function simulateAnalysis() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = 'flex';
+            
+            // Simulating API call to /api/pipeline
+            console.log("POST /api/pipeline triggered...");
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                alert("Analysis Pipeline Complete: Generated semantic map for 1,200 new paper embeddings.");
+            }, 2500);
+        }
+
+        // Add small hover effects for interactive data
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential for lightweight JS effects
+            });
+        });
+
+        // Search shortcut
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                document.querySelector('input[type="text"]').focus();
+            }
+        });
+    </script>
+</body></html>
