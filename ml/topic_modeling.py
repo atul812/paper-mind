@@ -5,14 +5,19 @@ from hdbscan import HDBSCAN
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 import pandas as pd
 
+EMBEDDING_MODEL = SentenceTransformer(
+    "sentence-transformers/all-MiniLM-L6-v2"
+)
+
+RESEARCH_STOP_WORDS = {
+    "et", "al", "figure", "method", "paper", "result",
+    "approach", "study", "dataset", "model", "learning",
+}
+
 
 def run_topic_modeling(papers):
 
     abstracts = [p["abstract"] for p in papers]
-
-    embedding_model = SentenceTransformer(
-        "sentence-transformers/all-MiniLM-L6-v2"
-    )
 
     # Adjust UMAP parameters based on dataset size
     n_neighbors = max(3, min(15, len(abstracts) - 1))
@@ -46,15 +51,15 @@ def run_topic_modeling(papers):
         "approach", "study", "dataset", "model", "learning",
     }
     vectorizer_model = CountVectorizer(
-        stop_words=list(set(ENGLISH_STOP_WORDS).union(research_stop_words)),
+        stop_words=list(set(ENGLISH_STOP_WORDS).union(RESEARCH_STOP_WORDS)),
         ngram_range=(1, 2),
         min_df=1,
         max_df=1.0,
-        max_features=1000,
+        max_features=500,
     )
     
     topic_model = BERTopic(
-        embedding_model=embedding_model,
+        embedding_model=EMBEDDING_MODEL,
         umap_model=umap_model,
         hdbscan_model=hdbscan_model,
         vectorizer_model=vectorizer_model,

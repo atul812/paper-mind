@@ -3,12 +3,16 @@ import time
 
 BASE_URL = "https://api.semanticscholar.org/graph/v1/paper/"
 _cache = {}
+MAX_CITATION_PAPERS = 12
 
 def get_citation_data(arxiv_id):
     if arxiv_id in _cache:
         return _cache[arxiv_id]
 
-    paper_id = f"ARXIV:{arxiv_id}"
+    # Strip version suffix (e.g., '2106.12345v2' -> '2106.12345')
+    # Semantic Scholar's ARXIV: lookup doesn't resolve versioned IDs
+    arxiv_id_clean = arxiv_id.split('v')[0] if 'v' in arxiv_id else arxiv_id
+    paper_id = f"ARXIV:{arxiv_id_clean}"
     fields = (
         "citationCount",
         "influentialCitationCount",
@@ -22,7 +26,7 @@ def get_citation_data(arxiv_id):
             params={
                 "fields": fields
             },
-            timeout=20
+            timeout=12
         )
 
         if response.status_code != 200:
@@ -35,14 +39,10 @@ def get_citation_data(arxiv_id):
         data = response.json()
 
         result = {
-           "citation_count":data.get("citationCount",0),
-            "influential_citation_count":
-            data.get(
-                "influentialCitationCount",0
-            )
+            "citation_count": data.get("citationCount", None),
+            "influential_citation_count": data.get("influentialCitationCount", None),
         }
         _cache[arxiv_id] = result
-        time.sleep(0.05)
         return result
 
     except Exception:
@@ -57,7 +57,11 @@ def get_citation_data(arxiv_id):
 
 def enrich_with_citations(papers):
     enriched = []
-    for paper in papers:
+    for index, paper in enumerate(papers):
+        if index >= MAX_CITATION_PAPERS:
+            enriched.append(paper)
+            continue
+
         arxiv_id = paper["id"]
         citation_data = get_citation_data(
             arxiv_id

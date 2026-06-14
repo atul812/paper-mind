@@ -5,7 +5,7 @@ from datetime import datetime
 BASE_URL = "https://export.arxiv.org/api/query"
 
 
-def fetch_papers(query, max_results=150):
+def fetch_papers(query, max_results=40):
 
     params = {
         "search_query": f"all:{query}",
@@ -50,8 +50,8 @@ def fetch_papers(query, max_results=150):
             "published_date":
             datetime.strptime(entry.published,"%Y-%m-%dT%H:%M:%SZ"),
             "topic_id":-1,
-            "citation_count":0,
-            "influential_citation_count":0,
+            "citation_count":None,
+            "influential_citation_count":None,
             "window":None
 
         }

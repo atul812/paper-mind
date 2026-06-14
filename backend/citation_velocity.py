@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def compute_citation_velocity(papers, min_age_days=60):
+def compute_citation_velocity(papers, min_age_days=0):
     rows=[]
     grouped={}
 
@@ -16,20 +16,28 @@ def compute_citation_velocity(papers, min_age_days=60):
         papers_list = papers
     
     now = datetime.now()
+    def _safe_number(value):
+        if value is None:
+            return 0.0
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return 0.0
+
     for p in papers_list:
 
         if p.get("topic_id") == -1:
             continue
 
         published_date = p.get("published_date")
-        if published_date is not None:
+        if published_date is not None and min_age_days > 0:
             age_days = (now - published_date).days
             if age_days < min_age_days:
                 continue
 
         citation_weight = (
-            p.get("citation_count", 0) * 0.4 +
-            p.get("influential_citation_count", 0) * 0.6
+            _safe_number(p.get("citation_count")) * 0.4 +
+            _safe_number(p.get("influential_citation_count")) * 0.6
         )
 
         topic_id = p.get("topic_id")

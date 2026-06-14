@@ -9,14 +9,22 @@ def compute_momentum(publication_velocity,citation_velocity):
         citation_map[c["topic_id"]]=c
     results=[]
 
+    def _safe_number(value):
+        if value is None:
+            return 0.0
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return 0.0
+
     for p in publication_velocity:
         topic_id=p["topic_id"]
 
         if topic_id not in citation_map:
             continue
 
-        pub_vel=p["velocity"]
-        cit_vel=citation_map[topic_id]["citation_velocity"]
+        pub_vel=_safe_number(p.get("velocity"))
+        cit_vel=_safe_number(citation_map[topic_id].get("citation_velocity"))
         momentum=(0.5*pub_vel)+(0.5*cit_vel)
 
         if momentum>0.1:

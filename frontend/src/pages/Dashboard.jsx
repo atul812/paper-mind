@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import Sidebar from '../components/Sidebar'
 import SearchBar from '../components/SearchBar'
 import StatsCards from '../components/StatsCards'
@@ -17,6 +17,13 @@ export default function Dashboard() {
   const [papersPage, setPapersPage] = useState(1)
   const inputRef = useRef(null)
 
+  console.log('[DASHBOARD] RENDER:', {
+    loading,
+    hasResult: !!result,
+    resultKeys: result ? Object.keys(result) : [],
+    activePage,
+  })
+
   useEffect(() => {
     const handleShortcut = (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -30,6 +37,7 @@ export default function Dashboard() {
   }, [])
 
   const handleSearch = async () => {
+    console.log('[SEARCH] START:', { query })
     if (!query.trim()) {
       setError('Please enter a research query before analyzing.')
       return
@@ -40,9 +48,17 @@ export default function Dashboard() {
     setResult(null)
 
     try {
+      console.time('total_pipeline')
       const data = await runPipeline(query.trim())
+      console.timeEnd('total_pipeline')
+      console.log('[SEARCH] RESPONSE_RECEIVED:', {
+        keys: Object.keys(data),
+        paperCount: data.papers?.length ?? 0,
+      })
       setResult(data)
+      console.log('[SEARCH] STATE_UPDATED')
     } catch (fetchError) {
+      console.error('[SEARCH] ERROR:', fetchError)
       setError(fetchError?.message || 'Unable to connect to the analysis API.')
     } finally {
       setLoading(false)
@@ -50,10 +66,12 @@ export default function Dashboard() {
   }
 
   const handleNavigate = (page) => {
+    console.log('[NAVIGATE]:', page)
     setActivePage(page)
   }
 
   useEffect(() => {
+    console.log('[EFFECT] PAPERS_LENGTH_CHANGED:', result?.papers?.length)
     setPapersPage(1)
   }, [result?.papers?.length])
 
@@ -74,7 +92,12 @@ export default function Dashboard() {
   const velocityItems = Array.isArray(result?.velocity) ? result.velocity.filter(Boolean) : []
   const citationItems = Array.isArray(result?.citation_velocity) ? result.citation_velocity.filter(Boolean) : []
 
-  const fallbackMomentum = (() => {
+  // Use useMemo to prevent recalculation on every render
+  const fallbackMomentum = useMemo(() => {
+    console.log('[MEMO] CALCULATING_FALLBACK_MOMENTUM:', {
+      velocityCount: velocityItems.length,
+      citationCount: citationItems.length,
+    })
     const map = new Map()
 
     velocityItems.forEach((item) => {
@@ -108,20 +131,29 @@ export default function Dashboard() {
       })
     })
 
-    return Array.from(map.values())
-  })()
+    const result = Array.from(map.values())
+    console.log('[MEMO] FALLBACK_MOMENTUM_RESULT:', result.length)
+    return result
+  }, [velocityItems, citationItems])
 
   const dashboardMomentum = backendMomentum.length ? backendMomentum : fallbackMomentum
-  const derivedResult = {
-    ...result,
-    momentum: dashboardMomentum,
-  }
-  const highestMomentumItem = dashboardMomentum.length
-    ? dashboardMomentum.reduce((best, item) => (Number(item?.momentum ?? -Infinity) > Number(best?.momentum ?? -Infinity) ? item : best), dashboardMomentum[0])
-    : null
-  const globalIndex = dashboardMomentum.length
-    ? Math.max(...dashboardMomentum.map((item) => Number(item?.momentum ?? 0))).toFixed(2)
-    : '—'
+  const derivedResult = useMemo(
+    () => ({
+      ...result,
+      momentum: dashboardMomentum,
+    }),
+    [result, dashboardMomentum]
+  )
+
+  const highestMomentumItem = useMemo(() => {
+    if (dashboardMomentum.length === 0) return null
+    return dashboardMomentum.reduce((best, item) => (Number(item?.momentum ?? -Infinity) > Number(best?.momentum ?? -Infinity) ? item : best), dashboardMomentum[0])
+  }, [dashboardMomentum])
+
+  const globalIndex = useMemo(() => {
+    if (dashboardMomentum.length === 0) return '—'
+    return Math.max(...dashboardMomentum.map((item) => Number(item?.momentum ?? 0))).toFixed(2)
+  }, [dashboardMomentum])
 
   const downloadPapers = () => {
     if (!papers.length) {
