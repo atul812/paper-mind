@@ -7,6 +7,7 @@ import MomentumChart from '../components/MomentumChart'
 import ForecastChart from '../components/ForecastChart'
 import TopicTable from '../components/TopicTable'
 import { runPipeline } from '../services/api'
+import ResearchGaps from '../components/ResearchGaps'
 
 export default function Dashboard() {
   const [query, setQuery] = useState('federated learning')
@@ -532,6 +533,16 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {activePage === 'Gaps' && (
+          <div className="page-section">
+            <div className="section-heading">
+              <h2>Research Gaps</h2>
+              <p>AI-powered research opportunities identified from the top accelerating topics in your query.</p>
+            </div>
+            <ResearchGaps gaps={result?.research_gaps ?? []} />
           </div>
         )}
 
