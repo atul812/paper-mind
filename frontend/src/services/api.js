@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: 'https://didactic-dollop-wrqpjx6q79jvhg944-8000.app.github.dev/',
   timeout: 120000, // Increased timeout to 2 minutes
   headers: {
     'Content-Type': 'application/json',
